@@ -1,16 +1,16 @@
-D:\Senior Project\Remember-Me\Remember ME\bin\Debug\WpfApp1.exe.config
-D:\Senior Project\Remember-Me\Remember ME\bin\Debug\WpfApp1.exe
-D:\Senior Project\Remember-Me\Remember ME\bin\Debug\WpfApp1.pdb
-D:\Senior Project\Remember-Me\Remember ME\obj\Debug\Remember Me.csprojAssemblyReference.cache
-D:\Senior Project\Remember-Me\Remember ME\obj\Debug\MainWindow.g.cs
-D:\Senior Project\Remember-Me\Remember ME\obj\Debug\Create_View.g.cs
-D:\Senior Project\Remember-Me\Remember ME\obj\Debug\App.g.cs
-D:\Senior Project\Remember-Me\Remember ME\obj\Debug\WpfApp1_MarkupCompile.cache
-D:\Senior Project\Remember-Me\Remember ME\obj\Debug\WpfApp1_MarkupCompile.lref
-D:\Senior Project\Remember-Me\Remember ME\obj\Debug\MainWindow.baml
-D:\Senior Project\Remember-Me\Remember ME\obj\Debug\Create_View.baml
-D:\Senior Project\Remember-Me\Remember ME\obj\Debug\WpfApp1.g.resources
-D:\Senior Project\Remember-Me\Remember ME\obj\Debug\WpfApp1.Properties.Resources.resources
-D:\Senior Project\Remember-Me\Remember ME\obj\Debug\Remember Me.csproj.GenerateResource.cache
-D:\Senior Project\Remember-Me\Remember ME\obj\Debug\WpfApp1.exe
-D:\Senior Project\Remember-Me\Remember ME\obj\Debug\WpfApp1.pdb
+D:\Senior Project\Remember Me\bin\Debug\Remember Me.exe.config
+D:\Senior Project\Remember Me\bin\Debug\Remember Me.exe
+D:\Senior Project\Remember Me\bin\Debug\Remember Me.pdb
+D:\Senior Project\Remember Me\obj\Debug\Login.g.cs
+D:\Senior Project\Remember Me\obj\Debug\ViewEntry.g.cs
+D:\Senior Project\Remember Me\obj\Debug\App.g.cs
+D:\Senior Project\Remember Me\obj\Debug\Remember Me_MarkupCompile.cache
+D:\Senior Project\Remember Me\obj\Debug\Remember Me_MarkupCompile.lref
+D:\Senior Project\Remember Me\obj\Debug\Login.baml
+D:\Senior Project\Remember Me\obj\Debug\ViewEntry.baml
+D:\Senior Project\Remember Me\obj\Debug\Remember Me.g.resources
+D:\Senior Project\Remember Me\obj\Debug\Remember_Me.Properties.Resources.resources
+D:\Senior Project\Remember Me\obj\Debug\Remember Me.csproj.GenerateResource.cache
+D:\Senior Project\Remember Me\obj\Debug\Remember Me.exe
+D:\Senior Project\Remember Me\obj\Debug\Remember Me.pdb
+D:\Senior Project\Remember Me\obj\Debug\Remember Me.csprojAssemblyReference.cache

@@ -10,31 +10,18 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace Remember_Me
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for ViewEntry.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class ViewEntry : Window
     {
-        public MainWindow()
+        public ViewEntry()
         {
             InitializeComponent();
-        }
-
-        private void Login_Click(object sender, RoutedEventArgs e)
-        {
-            ViewEntry viewEntry = new ViewEntry();
-            viewEntry.Show();
-            this.Close();
-        }
-
-        private void Close_Click(object sender, RoutedEventArgs e)
-        {
-            App.Current.Shutdown();
         }
     }
 }
