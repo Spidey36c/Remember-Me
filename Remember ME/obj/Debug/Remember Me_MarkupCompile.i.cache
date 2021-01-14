@@ -4,17 +4,17 @@
 winexe
 C#
 .cs
-D:\Senior Project\Remember Me\obj\Debug\
+D:\Senior Project\Remember-Me\Remember ME\obj\Debug\
 Remember_Me
 none
 false
 DEBUG;TRACE
-D:\Senior Project\Remember Me\App.xaml
-21941286314
+D:\Senior Project\Remember-Me\Remember ME\App.xaml
+3-2039126112
 
-7904308349
+8890970834
 13-1505183044
-Login.xaml;ViewEntry.xaml;
+CreateAccount.xaml;Login.xaml;ViewEntry.xaml;
 
-False
+True
 
