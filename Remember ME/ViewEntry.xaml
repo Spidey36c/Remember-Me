@@ -7,6 +7,15 @@
         mc:Ignorable="d"
         Title="ViewEntry" Height="450" Width="800">
     <Grid>
-        
+        <TabControl>
+            <TabItem Header="Create Entry" FontSize="20">
+                <StackPanel Orientation="Horizontal">
+                    
+                </StackPanel>
+            </TabItem>
+            <TabItem Header="View Entry" FontSize="20">
+            
+            </TabItem>        
+        </TabControl>
     </Grid>
 </Window>
