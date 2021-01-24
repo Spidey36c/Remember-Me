@@ -104,6 +104,7 @@
     <Compile Include="CreateAccount.xaml.cs">
       <DependentUpon>CreateAccount.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Entries.cs" />
     <Compile Include="ViewEntry.xaml.cs">
       <DependentUpon>ViewEntry.xaml</DependentUpon>
     </Compile>

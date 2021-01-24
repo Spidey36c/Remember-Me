@@ -15,6 +15,8 @@ using System.Windows.Shapes;
 using System.Data.SqlClient;
 using MySql.Data.MySqlClient;
 using System.IO;
+using System.Data;
+using System.Collections;
 
 namespace Remember_Me
 {
@@ -26,6 +28,33 @@ namespace Remember_Me
         public ViewEntry()
         {
             InitializeComponent();
+            FillDataGrid();
+        }
+
+        private void FillDataGrid()
+        {
+            string server = "server=127.0.0.1;user id=root;database=rememberme;password=Hermiston2017!";
+            MySqlConnection con = new MySqlConnection(server);
+            string query = "SELECT entry.Name, entry.Group, entry.Description FROM entry";
+
+            MySqlDataAdapter entryadapt = new MySqlDataAdapter(query,con);
+
+            MySqlCommandBuilder Entrycmd = new MySqlCommandBuilder(entryadapt);
+
+            DataTable dt = new DataTable("Entries");
+
+            entryadapt.Fill(dt);
+
+            Entries.ItemsSource = dt.DefaultView;
+        }
+
+        private void Row_DoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            DataRowView selected = (DataRowView)Entries.SelectedItems[0];
+
+            string str = Convert.ToString(selected.Row.ItemArray[0]); //wonky but works, 
+
+            MessageBox.Show("Opening entry " + str);
         }
 
         private void LoadImg_Click(object sender, RoutedEventArgs e)
@@ -57,36 +86,58 @@ namespace Remember_Me
             }
             else //Clear data
             {
-                FileStream fs = new FileStream(((BitmapImage)EntryImg.Source).UriSource.OriginalString, FileMode.Open, FileAccess.Read);
+                byte[] ImgData = null;
+                if (EntryImg.Source != null)
+                {
+                    FileStream fs = new FileStream(((BitmapImage)EntryImg.Source).UriSource.OriginalString, FileMode.Open, FileAccess.Read);
 
-                BinaryReader br = new BinaryReader(fs);
-                byte[] ImgData = br.ReadBytes((int)fs.Length);
+                    BinaryReader br = new BinaryReader(fs);
+                    ImgData = br.ReadBytes((int)fs.Length);
 
-                br.Close();
-                fs.Close();
-
+                    br.Close();
+                    fs.Close();
+                }
                 string server = "server=127.0.0.1;user id=root;database=rememberme;password=Hermiston2017!";
                 MySqlConnection con = new MySqlConnection(server);
-                string query = "INSERT INTO `rememberme`.`entry`(`Name`,`Group`,`Description`,`Picture`) VALUES(@Name, @Group, @Description, @Picture)";
-                MySqlCommand cmd = new MySqlCommand(query, con);
 
-                cmd.Parameters.AddWithValue("@Name", EntryName.Text);
-                cmd.Parameters.AddWithValue("@Group", EntryGroup.Text);
-                cmd.Parameters.AddWithValue("@Description", EntryDesc.Text);
-                cmd.Parameters.AddWithValue("@Picture", ImgData);
+                string check = "SELECT * FROM entry WHERE entry.name = '" + EntryName.Text + "'";
+                MySqlCommand cmd = new MySqlCommand(check, con);
 
                 con.Open();
 
-                int RowsAffected = cmd.ExecuteNonQuery();
-                if (RowsAffected > 0)
+                MySqlDataReader dataReader = cmd.ExecuteReader();
+
+                if (dataReader.HasRows)
                 {
-                    MessageBox.Show("Entry Successfully Added");
+                    MessageBox.Show("That Entry Name Already Exists");
+                    con.Close();
                 }
+                else
+                {
+                    con.Close();
+                    string query = "INSERT INTO `rememberme`.`entry`(`Name`,`Group`,`Description`,`Picture`) VALUES(@Name, @Group, @Description, @Picture)";
+                    cmd.CommandText = query;
 
-                con.Close();
+                    cmd.Parameters.AddWithValue("@Name", EntryName.Text);
+                    cmd.Parameters.AddWithValue("@Group", EntryGroup.Text);
+                    cmd.Parameters.AddWithValue("@Description", EntryDesc.Text);
+                    cmd.Parameters.AddWithValue("@Picture", ImgData);
 
-                this.Clear_Click(sender, e); //it works for now, might be simpler to just make a non-event function
-                ViewTab.IsSelected = true; //Switch views
+                    con.Open();
+
+                    int RowsAffected = cmd.ExecuteNonQuery();
+                    if (RowsAffected > 0)
+                    {
+                        MessageBox.Show("Entry Successfully Added");
+                    }
+
+                    con.Close();
+
+                    FillDataGrid();
+
+                    this.Clear_Click(sender, e); //it works for now, might be simpler to just make a non-event function
+                    ViewTab.IsSelected = true; //Switch views
+                }
             }
 
 

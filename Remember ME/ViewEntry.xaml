@@ -32,7 +32,22 @@
                 </StackPanel>
             </TabItem>
             <TabItem Header="View Entry" x:Name="ViewTab"  FontSize="20">
-            
+                <StackPanel Orientation="Horizontal">
+                    <DataGrid x:Name="Entries" Width="550" Height="500" CanUserReorderColumns="False" CanUserResizeColumns="False" CanUserSortColumns="False" CanUserResizeRows="False" IsReadOnly="True">
+                        <DataGrid.ItemContainerStyle>
+                            <Style TargetType="DataGridRow">
+                                <EventSetter Event="MouseDoubleClick" Handler="Row_DoubleClick"/>
+                            </Style>
+                        </DataGrid.ItemContainerStyle>
+                    </DataGrid>
+                    <StackPanel Orientation="Vertical">
+                        <StackPanel Orientation="Horizontal">
+                            <Button x:Name="Settings" Content="Settings" Margin="10,10,0,0" Height="70"/>
+                            <Button x:Name="VoiceCmd" Content="Voice Commands" Margin="10,10,0,0"/>
+                        </StackPanel>
+                        <TextBox x:Name="Commands" Height="400" Width="270"/>
+                    </StackPanel>
+                </StackPanel>
             </TabItem>        
         </TabControl>
     </Grid>

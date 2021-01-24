@@ -27,6 +27,7 @@ namespace Remember_Me
 
         private void Login_Click(object sender, RoutedEventArgs e)
         {
+            Application.Current.Properties["SelectedEntry"] = new EntryClass();
             ViewEntry viewEntry = new ViewEntry();
             viewEntry.Show();
             this.Close();
