@@ -54,7 +54,10 @@ namespace Remember_Me
 
             string str = Convert.ToString(selected.Row.ItemArray[0]); //wonky but works, 
 
-            MessageBox.Show("Opening entry " + str);
+            Application.Current.Properties["Selected"] = str;
+
+            DetailedView view = new DetailedView();
+            view.ShowDialog();
         }
 
         private void LoadImg_Click(object sender, RoutedEventArgs e)
@@ -65,7 +68,9 @@ namespace Remember_Me
             //Might expand filter if needed, I.E. weird camera image file, needs testing
             if(op.ShowDialog() == true)
             {
+                TempImg.Visibility = Visibility.Collapsed;
                 EntryImg.Source = new BitmapImage(new Uri(op.FileName));
+                EntryImg.Visibility = Visibility.Visible;
             }
         }
 
@@ -149,6 +154,8 @@ namespace Remember_Me
             EntryGroup.Text = "";
             EntryDesc.Text = "";
             EntryImg.Source = null;
+            EntryImg.Visibility = Visibility.Collapsed;
+            TempImg.Visibility = Visibility.Visible;
         }
     }
 }

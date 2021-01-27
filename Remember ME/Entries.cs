@@ -6,39 +6,39 @@ using System.Threading.Tasks;
 
 namespace Remember_Me
 {
-    class EntryClass
+    public static class EntryClass //really bad way of keeping entry data between windows
     {
-        private int id;
-        private string name;
-        private string group;
-        private string desc;
-        private byte[] picture;
+        private static int id;
+        private static string name;
+        private static string group;
+        private static string desc;
+        private static byte[] picture;
 
-        public int ID
+        public static int ID
         {
             get { return id; }
             set { id = value; }
         }
 
-        public string Name
+        public static string Name
         {
             get { return name; }
             set { name = value; }
         }
 
-        public string Group
+        public static string Group
         {
             get { return group; }
             set { group = value; }
         }
 
-        public string Description
+        public static string Description
         {
             get { return desc; }
             set { desc = value; }
         }
 
-        public byte[] Picture
+        public static byte[] Picture
         {
             get { return picture; }
             set { picture = value; }

@@ -5,25 +5,27 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Remember_Me"
         mc:Ignorable="d"
-        Title="DetailedView" Height="630" Width="850">
+        Title="DetailedView" Height="560" Width="850">
     <Grid>
         <StackPanel Orientation="Vertical">
             <StackPanel Orientation="Horizontal">
                 <StackPanel Orientation="Vertical">
-                    <Image Margin="40,50,5,10" Name="EntryImg" Stretch="Fill" Height="200" Width="200"/>
+                    <Image Margin="10,10,5,10" Name="EntryImg" Stretch="Fill" Height="260" Width="500" Visibility="Collapsed"/>
+                    <Image Margin="10,10,5,10" Name="TempImg" Stretch="Fill" Height="260" Width="500" Source="/Images/Default Picture.png"/>
                 </StackPanel>
                 <StackPanel Orientation="Vertical" HorizontalAlignment="Right">
-                    <Label Content="Name of Entry" Margin="400,10,30,10" FontSize="20"/>
-                    <TextBox x:Name="EntryName" FontSize="20" Width="300" HorizontalAlignment="Right" Margin="0,0,30,0" IsEnabled="False"/>
-                    <Label Content="Group of Entry" Margin="400,10,30,10" FontSize="20"/>
-                    <TextBox x:Name="EntryGroup" FontSize="20" Width="300" HorizontalAlignment="Right" Margin="0,0,30,0" IsEnabled="False"/>
+                    <Label Content="Name of Entry" Margin="0,10,0,10" FontSize="20"/>
+                    <TextBox x:Name="EntryName" FontSize="20" Width="300" Margin="0,0,30,0" IsEnabled="False"/>
+                    <Label Content="Group of Entry" Margin="0,10,0,10" FontSize="20"/>
+                    <TextBox x:Name="EntryGroup" FontSize="20" Width="300" Margin="0,0,30,0" IsEnabled="False"/>
                 </StackPanel>
             </StackPanel>
-            <Label Content="Description" Margin="600,10,10,10" FontSize="20"/>
-            <TextBox x:Name="EntryDesc" FontSize="20" Width="600" Height="120" HorizontalAlignment="Right" Margin="0,0,30,20" IsEnabled="False"/>
+            <Label Content="Description" Margin="10,10,0,10" FontSize="20"/>
+            <TextBox x:Name="EntryDesc" FontSize="20" Width="600" HorizontalAlignment="Left" Height="120" Margin="10,0,0,20" IsEnabled="False"/>
             <StackPanel Orientation="Horizontal">
-                <Button x:Name="Edit" Content="Create entry" Margin="30,0,0,0"/>
-                <Button x:Name="Export" Content="Import Entry" Margin="200,0,0,0"/>
+                <Button x:Name="Edit" Content="Edit entry" Margin="30,0,0,0" Width="140" Height="40" FontSize="20"/>
+                <Button x:Name="Exit" Content="Close" Margin="180,0,0,0" Width="140" Height="40" FontSize="20" Click="Exit_Click"/>
+                <Button x:Name="Export" Content="Export Entry" Margin="170,0,0,0" Width="140" Height="40" FontSize="20"/>
             </StackPanel>
         </StackPanel>
     </Grid>
