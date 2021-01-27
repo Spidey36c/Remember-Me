@@ -104,11 +104,18 @@
     <Compile Include="CreateAccount.xaml.cs">
       <DependentUpon>CreateAccount.xaml</DependentUpon>
     </Compile>
+    <Compile Include="DetailedView.xaml.cs">
+      <DependentUpon>DetailedView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Entries.cs" />
     <Compile Include="ViewEntry.xaml.cs">
       <DependentUpon>ViewEntry.xaml</DependentUpon>
     </Compile>
     <Page Include="CreateAccount.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="DetailedView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

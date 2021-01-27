@@ -27,7 +27,6 @@ namespace Remember_Me
 
         private void Login_Click(object sender, RoutedEventArgs e)
         {
-            Application.Current.Properties["SelectedEntry"] = new EntryClass();
             ViewEntry viewEntry = new ViewEntry();
             viewEntry.Show();
             this.Close();
@@ -41,7 +40,7 @@ namespace Remember_Me
         private void CreateAccount_Click(object sender, RoutedEventArgs e)
         {
             CreateAccount createaccout = new CreateAccount();
-            createaccout.ShowDialog();
+            createaccout.ShowDialog(); 
         }
     }
 }

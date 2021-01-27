@@ -8,10 +8,17 @@ namespace Remember_Me
 {
     class EntryClass
     {
+        private int id;
         private string name;
         private string group;
         private string desc;
         private byte[] picture;
+
+        public int ID
+        {
+            get { return id; }
+            set { id = value; }
+        }
 
         public string Name
         {
