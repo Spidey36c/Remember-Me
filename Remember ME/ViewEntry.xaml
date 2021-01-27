@@ -12,8 +12,8 @@
                 <StackPanel Orientation="Vertical">
                     <StackPanel Orientation="Horizontal">
                         <StackPanel Orientation="Vertical">
-                            <Image Margin="10,10,5,10" Name="EntryImg" Stretch="Fill" Height="260" Width="500" Visibility="Collapsed"/>
-                            <Image Margin="10,10,5,10" Name="TempImg" Stretch="Fill" Height="260" Width="500" Source="/Images/Default Picture.png"/>
+                            <Image Margin="10,10,5,10" Name="EntryImg" Stretch="Uniform" Height="260" Width="500" Visibility="Collapsed"/>
+                            <Image Margin="10,10,5,10" Name="TempImg" Stretch="Uniform" Height="260" Width="500" Source="/Images/Default Picture.png"/>
                             <Button Height="30" HorizontalAlignment="Center" Margin="20,0,0,0" Name="LoadImg" Content="Browse for Picture" Click="LoadImg_Click"/>
                         </StackPanel>
                         <StackPanel Orientation="Vertical">

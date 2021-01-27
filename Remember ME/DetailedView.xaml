@@ -10,8 +10,8 @@
         <StackPanel Orientation="Vertical">
             <StackPanel Orientation="Horizontal">
                 <StackPanel Orientation="Vertical">
-                    <Image Margin="10,10,5,10" Name="EntryImg" Stretch="Fill" Height="260" Width="500" Visibility="Collapsed"/>
-                    <Image Margin="10,10,5,10" Name="TempImg" Stretch="Fill" Height="260" Width="500" Source="/Images/Default Picture.png"/>
+                    <Image Margin="10,10,5,10" Name="EntryImg" Stretch="Uniform" Height="260" Width="500" Visibility="Collapsed"/>
+                    <Image Margin="10,10,5,10" Name="TempImg" Stretch="Uniform" Height="260" Width="500" Source="/Images/Default Picture.png"/>
                 </StackPanel>
                 <StackPanel Orientation="Vertical" HorizontalAlignment="Right">
                     <Label Content="Name of Entry" Margin="0,10,0,10" FontSize="20"/>
