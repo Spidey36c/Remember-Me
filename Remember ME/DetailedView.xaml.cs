@@ -84,5 +84,18 @@ namespace Remember_Me
         {
             this.Close(); //just another way to close window
         }
+
+        private void Edit_Click(object sender, RoutedEventArgs e)
+        {
+            Edit edit = new Edit();
+
+            edit.ShowDialog();
+            if ((bool)Application.Current.Properties["Edited"] == true)
+            {
+                EntryName.Text = EntryClass.Name;
+                EntryGroup.Text = EntryClass.Group;
+                EntryDesc.Text = EntryClass.Description;
+            }
+        }
     }
 }

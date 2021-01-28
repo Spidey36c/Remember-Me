@@ -55,6 +55,7 @@ namespace Remember_Me
             string str = Convert.ToString(selected.Row.ItemArray[0]); //wonky but works, 
 
             Application.Current.Properties["Selected"] = str;
+            Application.Current.Properties["Edited"] = false;
 
             DetailedView view = new DetailedView();
             view.ShowDialog();
