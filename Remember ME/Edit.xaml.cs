@@ -64,7 +64,7 @@ namespace Remember_Me
 
             MySqlDataReader dataReader = cmd.ExecuteReader();
 
-            if (dataReader.HasRows)
+            if (dataReader.HasRows && ((string)dataReader["Name"] != EntryClass.Name))
             {
                 MessageBox.Show("That Entry Name Already Exists");
                 con.Close();
