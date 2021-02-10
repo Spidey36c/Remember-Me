@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Remember_Me"
         mc:Ignorable="d"
-        Title="ViewEntry" Height="630" Width="850">
+        Title="ViewEntry" Height="630" Width="1050" ResizeMode="NoResize">
     <Grid>
         <TabControl>
             <TabItem Header="Create Entry" x:Name="CreateTab" FontSize="20">
@@ -23,8 +23,20 @@
                             <TextBox x:Name="EntryGroup" FontSize="20" Width="300" Margin="0,0,30,0"/>
                         </StackPanel>
                     </StackPanel>
-                    <Label Content="Description" Margin="10,10,0,10" FontSize="20"/>
-                    <TextBox x:Name="EntryDesc" FontSize="20" Width="600" HorizontalAlignment="Left" Height="120" Margin="10,0,0,20"/>
+                    <StackPanel Orientation="Horizontal">
+                        <StackPanel Orientation="Vertical">
+                          <Label Content="Description" Margin="10,10,0,10" FontSize="20"/>
+                          <TextBox x:Name="EntryDesc" FontSize="20" Width="600" HorizontalAlignment="Left" Height="120" Margin="10,0,0,20"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Vertical">
+                            <MediaElement Height="150" Name="Video" LoadedBehavior="Manual" Width="380" Margin="10,0,0,0"/>
+                            <StackPanel Orientation="Horizontal">
+                                <Button Content="Load Media" Name="LoadVideo" Margin="20,0,45,0" Width="120" Click="LoadVideo_Click"/>
+                                <Button Content="Pause" Name="PauseVideo" Margin="0,0,55,0" Width="90" Click="PauseVideo_Click" Visibility="Hidden"/>
+                                <Button Content="Play" Name="PlayVideo" Width="90" Click="PlayVideo_Click" Visibility="Hidden"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <Button x:Name="Create" Content="Create entry" Margin="30,0,0,0" Click="Create_Click"/>
                         <Button x:Name="Clear" Content="Clear data" Margin="200,0,0,0" Click="Clear_Click"/>

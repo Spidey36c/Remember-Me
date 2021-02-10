@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Remember_Me"
         mc:Ignorable="d"
-        Title="CreateAccount" Height="235" Width="400">
+        Title="CreateAccount" Height="235" Width="400" ResizeMode="NoResize">
     <Grid>
         <StackPanel Orientation="Vertical">
                 <Label FontSize="20">

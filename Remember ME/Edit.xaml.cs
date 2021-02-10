@@ -49,6 +49,16 @@ namespace Remember_Me
                 EntryImg.Source = bi;
                 EntryImg.Visibility = Visibility.Visible;
             }
+
+            if (EntryClass.FilePath != null)
+            {
+                if (File.Exists(EntryClass.FilePath))
+                {
+                    Video.Source = new Uri(EntryClass.FilePath);
+                    PlayVideo.Visibility = Visibility.Visible;
+                    PauseVideo.Visibility = Visibility.Visible;
+                }
+            }
         }
 
         private void Finish_Click(object sender, RoutedEventArgs e)
@@ -57,7 +67,7 @@ namespace Remember_Me
             MySqlConnection con = new MySqlConnection(server);
 
 
-            string check = "SELECT * FROM entry WHERE entry.name = '" + EntryName.Text + "'";
+            string check = "SELECT * FROM entry WHERE entry.name = '" + EntryName.Text + "'"; //SQL injection issue
             MySqlCommand cmd = new MySqlCommand(check, con);
 
             con.Open();
@@ -71,10 +81,11 @@ namespace Remember_Me
             }
             else
             {
-                con.Close();
-                check = "UPDATE `rememberme`.`entry` SET `Name` = '" + EntryName.Text + "', `Group` = '" + EntryGroup.Text + "', `Description` = '" + EntryDesc.Text + "' WHERE (`ID` = '" + EntryClass.ID + "')";
+                con.Close(); //SQL injection issue
+                check = "UPDATE `rememberme`.`entry` SET `Name` = '" + EntryName.Text /* make this @name*/ + "', `Group` = '" + EntryGroup.Text + "', `Description` = '" + EntryDesc.Text + "' WHERE (`ID` = '" + EntryClass.ID /*I think this MAY be fine*/ + "')";
                 cmd.CommandText = check;
 
+                // just use this to fix above injection issue,
                 cmd.Parameters.AddWithValue("@Name", EntryName.Text);
                 cmd.Parameters.AddWithValue("@Group", EntryGroup.Text);
                 cmd.Parameters.AddWithValue("@Description", EntryDesc.Text);
@@ -96,6 +107,16 @@ namespace Remember_Me
                 Application.Current.Properties["Edited"] = true;
                 this.Close();
             }
+        }
+
+        private void PlayVideo_Click(object sender, RoutedEventArgs e)
+        {
+            Video.Play(); //Simple but needed, I think
+        }
+
+        private void PauseVideo_Click(object sender, RoutedEventArgs e)
+        {
+            Video.Pause();
         }
     }
 }

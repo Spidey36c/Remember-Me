@@ -93,6 +93,7 @@ namespace Remember_Me
             else //Clear data
             {
                 byte[] ImgData = null;
+                string VidFile = null;
                 if (EntryImg.Source != null)
                 {
                     FileStream fs = new FileStream(((BitmapImage)EntryImg.Source).UriSource.OriginalString, FileMode.Open, FileAccess.Read);
@@ -103,17 +104,21 @@ namespace Remember_Me
                     br.Close();
                     fs.Close();
                 }
+                if (Video.Source != null && File.Exists(Video.Source.OriginalString))
+                {
+                    VidFile = Video.Source.OriginalString;
+                }
                 string server = "server=127.0.0.1;user id=root;database=rememberme;password=Hermiston2017!";
                 MySqlConnection con = new MySqlConnection(server);
 
-                string check = "SELECT * FROM entry WHERE entry.name = '" + EntryName.Text + "'";
+                string check = "SELECT * FROM entry WHERE entry.name = '" + EntryName.Text + "'"; //injection issue
                 MySqlCommand cmd = new MySqlCommand(check, con);
 
                 con.Open();
 
                 MySqlDataReader dataReader = cmd.ExecuteReader();
 
-                if (dataReader.HasRows)
+                if (dataReader.HasRows) //even if this fails the data will still be sent
                 {
                     MessageBox.Show("That Entry Name Already Exists");
                     con.Close();
@@ -121,13 +126,14 @@ namespace Remember_Me
                 else
                 {
                     con.Close();
-                    string query = "INSERT INTO `rememberme`.`entry`(`Name`,`Group`,`Description`,`Picture`) VALUES(@Name, @Group, @Description, @Picture)";
+                    string query = "INSERT INTO `rememberme`.`entry`(`Name`,`Group`,`Description`,`Picture`,`AVPath`) VALUES(@Name, @Group, @Description, @Picture,@Path)";
                     cmd.CommandText = query;
 
                     cmd.Parameters.AddWithValue("@Name", EntryName.Text);
                     cmd.Parameters.AddWithValue("@Group", EntryGroup.Text);
                     cmd.Parameters.AddWithValue("@Description", EntryDesc.Text);
-                    cmd.Parameters.AddWithValue("@Picture", ImgData);
+                    cmd.Parameters.AddWithValue("@Picture", ImgData); //could break maybe
+                    cmd.Parameters.AddWithValue("@Path", VidFile);
 
                     con.Open();
 
@@ -155,8 +161,36 @@ namespace Remember_Me
             EntryGroup.Text = "";
             EntryDesc.Text = "";
             EntryImg.Source = null;
+            Video.Source = null;
             EntryImg.Visibility = Visibility.Collapsed;
-            TempImg.Visibility = Visibility.Visible;
+            TempImg.Visibility = Visibility.Visible; //show default img
+            PlayVideo.Visibility = Visibility.Hidden;
+            PauseVideo.Visibility = Visibility.Hidden;
+        }
+
+        private void LoadVideo_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("Do not delete or move the selected video after creating entry, or errors may occur"); //irritating for testing, only show once per new entry?
+            OpenFileDialog op = new OpenFileDialog();
+            op.Title = "Select a Picture";
+            op.Filter = "*All Media Files|*.mp3;*.mp4;*.wmv";
+            //WMV may not work for everything
+            if (op.ShowDialog() == true)
+            {
+                Video.Source = new Uri(op.FileName);
+                PlayVideo.Visibility = Visibility.Visible;
+                PauseVideo.Visibility = Visibility.Visible;
+            }
+        }
+
+        private void PlayVideo_Click(object sender, RoutedEventArgs e)
+        {
+            Video.Play(); //Simple but needed, I think
+        }
+
+        private void PauseVideo_Click(object sender, RoutedEventArgs e)
+        {
+            Video.Pause();
         }
     }
 }

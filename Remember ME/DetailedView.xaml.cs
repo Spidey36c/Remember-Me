@@ -14,6 +14,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Xml.Serialization;
 
 namespace Remember_Me
 {
@@ -50,6 +51,11 @@ namespace Remember_Me
             else
                 EntryClass.Picture = null;
 
+            if (!reader.IsDBNull(reader.GetOrdinal("AVPath")))
+                EntryClass.FilePath = reader.GetString("AVPath");
+            else
+                EntryClass.FilePath = null;
+
             reader.Close();
 
             con.Close();
@@ -78,6 +84,16 @@ namespace Remember_Me
                 EntryImg.Source = bi;
                 EntryImg.Visibility = Visibility.Visible;
             }
+
+            if (EntryClass.FilePath != null)
+            {
+                if(File.Exists(EntryClass.FilePath))
+                {
+                    Video.Source = new Uri(EntryClass.FilePath);
+                    PlayVideo.Visibility = Visibility.Visible;
+                    PauseVideo.Visibility = Visibility.Visible;
+                }
+            }
         }
 
         private void Exit_Click(object sender, RoutedEventArgs e)
@@ -96,6 +112,37 @@ namespace Remember_Me
                 EntryGroup.Text = EntryClass.Group;
                 EntryDesc.Text = EntryClass.Description;
             }
+        }
+
+        private void PlayVideo_Click(object sender, RoutedEventArgs e)
+        {
+            Video.Play(); //Simple but needed, I think
+        }
+
+        private void PauseVideo_Click(object sender, RoutedEventArgs e)
+        {
+            Video.Pause();
+        }
+
+        private void Export_Click(object sender, RoutedEventArgs e)
+        {
+            ExportClass export = new ExportClass();
+            export.Name = EntryClass.Name;
+            export.Description = EntryClass.Description;
+            export.Group = EntryClass.Group;
+            export.Picture = EntryClass.Picture; //whether this is null or not this should work
+
+
+            //ABSOLUTELY NEED TO UPDATE THIS WHEN DEFAULT FOLDERS ARE ADDED
+            //current just has a test file to mess with
+            XmlSerializer serializer = new XmlSerializer(typeof(ExportClass));
+            using(TextWriter write = new StreamWriter(@"C:\Test.xml")) //using avoids having to open and close the writer
+            {
+                //Test.xml will eventually be "filepath....(entryname).xml"
+                serializer.Serialize(write, export);
+            }
+
+            MessageBox.Show("Entry Successfully Exported");
         }
     }
 }

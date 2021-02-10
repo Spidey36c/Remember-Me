@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Remember_Me"
         mc:Ignorable="d"
-        Title="DetailedView" Height="560" Width="850">
+        Title="DetailedView" Height="560" Width="1050" ResizeMode="NoResize">
     <Grid>
         <StackPanel Orientation="Vertical">
             <StackPanel Orientation="Horizontal">
@@ -20,12 +20,23 @@
                     <TextBox x:Name="EntryGroup" FontSize="20" Width="300" Margin="0,0,30,0" IsEnabled="False"/>
                 </StackPanel>
             </StackPanel>
-            <Label Content="Description" Margin="10,10,0,10" FontSize="20"/>
-            <TextBox x:Name="EntryDesc" FontSize="20" Width="600" HorizontalAlignment="Left" Height="120" Margin="10,0,0,20" IsEnabled="False"/>
+            <StackPanel Orientation="Horizontal">
+                <StackPanel Orientation="Vertical">
+                    <Label Content="Description" Margin="10,10,0,10" FontSize="20"/>
+                    <TextBox x:Name="EntryDesc" FontSize="20" Width="600" HorizontalAlignment="Left" Height="120" Margin="10,0,0,20"/>
+                </StackPanel>
+                <StackPanel Orientation="Vertical">
+                    <MediaElement Height="150" Name="Video" LoadedBehavior="Manual" Width="380" Margin="10,0,0,0"/>
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="Pause" Name="PauseVideo" Margin="10,0,200,0" Width="90" Click="PauseVideo_Click" Visibility="Hidden"/>
+                        <Button Content="Play" Name="PlayVideo" Width="90" Click="PlayVideo_Click" Visibility="Hidden"/>
+                    </StackPanel>
+                </StackPanel>
+            </StackPanel>
             <StackPanel Orientation="Horizontal">
                 <Button x:Name="EditButton" Content="Edit entry" Margin="30,0,0,0" Width="140" Height="40" FontSize="20" Click="Edit_Click"/>
                 <Button x:Name="Exit" Content="Close" Margin="180,0,0,0" Width="140" Height="40" FontSize="20" Click="Exit_Click"/>
-                <Button x:Name="Export" Content="Export Entry" Margin="170,0,0,0" Width="140" Height="40" FontSize="20"/>
+                <Button x:Name="Export" Content="Export Entry" Margin="170,0,0,0" Width="140" Height="40" FontSize="20" Click="Export_Click"/>
             </StackPanel>
         </StackPanel>
     </Grid>
