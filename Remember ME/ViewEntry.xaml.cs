@@ -17,6 +17,9 @@ using MySql.Data.MySqlClient;
 using System.IO;
 using System.Data;
 using System.Collections;
+using System.Xml.Serialization;
+using System.IO.IsolatedStorage;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace Remember_Me
 {
@@ -29,6 +32,30 @@ namespace Remember_Me
         {
             InitializeComponent();
             FillDataGrid();
+            LoadSettings();
+        }
+
+        private void LoadSettings()
+        {
+            SettingsSave save = new SettingsSave();
+            using (IsolatedStorageFile isoStore = IsolatedStorageFile.GetStore(IsolatedStorageScope.User | IsolatedStorageScope.Domain | IsolatedStorageScope.Assembly, null, null))
+            {
+                if (!isoStore.FileExists("settings.dat"))
+                {
+                    MessageBox.Show("Settings not found please add settings");
+                    Settigns settigns = new Settigns();
+                    settigns.Show();
+                }
+                else
+                {
+                    IsolatedStorageFileStream fs = isoStore.OpenFile("settings.dat", System.IO.FileMode.Open);
+                    BinaryFormatter bf = new BinaryFormatter();
+                    save = (SettingsSave)bf.Deserialize(fs);
+                    SettingsClass.ExportF = save.ExportF;
+                    SettingsClass.ImportF = save.ImportF;
+                }
+
+            }
         }
 
         private void FillDataGrid()
@@ -59,6 +86,7 @@ namespace Remember_Me
 
             DetailedView view = new DetailedView();
             view.ShowDialog();
+            EntryClass.Picture = null; //Needed for import to work, without it, it probably wouldn't
         }
 
         private void LoadImg_Click(object sender, RoutedEventArgs e)
@@ -72,6 +100,7 @@ namespace Remember_Me
                 TempImg.Visibility = Visibility.Collapsed;
                 EntryImg.Source = new BitmapImage(new Uri(op.FileName));
                 EntryImg.Visibility = Visibility.Visible;
+                EntryClass.Picture = null; 
             }
         }
 
@@ -94,7 +123,7 @@ namespace Remember_Me
             {
                 byte[] ImgData = null;
                 string VidFile = null;
-                if (EntryImg.Source != null)
+                if (EntryImg.Source != null && EntryClass.Picture == null)
                 {
                     FileStream fs = new FileStream(((BitmapImage)EntryImg.Source).UriSource.OriginalString, FileMode.Open, FileAccess.Read);
 
@@ -103,6 +132,10 @@ namespace Remember_Me
 
                     br.Close();
                     fs.Close();
+                }
+                else if(EntryClass.Picture != null)
+                {
+                    ImgData = EntryClass.Picture;
                 }
                 if (Video.Source != null && File.Exists(Video.Source.OriginalString))
                 {
@@ -148,6 +181,7 @@ namespace Remember_Me
                     FillDataGrid();
 
                     this.Clear_Click(sender, e); //it works for now, might be simpler to just make a non-event function
+                    EntryClass.Picture = null;
                     ViewTab.IsSelected = true; //Switch views
                 }
             }
@@ -191,6 +225,54 @@ namespace Remember_Me
         private void PauseVideo_Click(object sender, RoutedEventArgs e)
         {
             Video.Pause();
+        }
+
+        private void Import_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog op = new OpenFileDialog();
+            op.Title = "Select an Entry";
+            op.Filter = "XML Files|*.xml";
+            op.InitialDirectory = SettingsClass.ImportF;
+            if(op.ShowDialog() == true)
+            {
+                XmlSerializer Deser = new XmlSerializer(typeof(ExportClass));
+                TextReader reader = new StreamReader(op.FileName);
+                object obj = Deser.Deserialize(reader);
+                ExportClass ex = (ExportClass)obj; //unsure if this will work if xml deserialized is not of the same class
+                reader.Close();
+                EntryName.Text = ex.Name;
+                EntryGroup.Text = ex.Group;
+                EntryDesc.Text = ex.Description;
+
+                if (ex.Picture != null)
+                {
+                    BitmapImage bi = new BitmapImage();
+
+                    MemoryStream ms = new MemoryStream(ex.Picture);
+
+                    ms.Position = 0;
+
+                    bi.BeginInit();
+                    bi.CreateOptions = BitmapCreateOptions.PreservePixelFormat;
+                    bi.CacheOption = BitmapCacheOption.OnLoad;
+                    bi.UriSource = null;
+                    bi.StreamSource = ms;
+                    bi.EndInit();
+                    bi.Freeze();
+
+                    TempImg.Visibility = Visibility.Collapsed;
+                    EntryImg.Source = bi;
+                    EntryImg.Visibility = Visibility.Visible;
+                }
+
+                EntryClass.Picture = ex.Picture;
+            }
+        }
+
+        private void Settings_Click(object sender, RoutedEventArgs e)
+        {
+            Settigns settigns = new Settigns();
+            settigns.Show();
         }
     }
 }

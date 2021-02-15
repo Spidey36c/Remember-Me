@@ -40,7 +40,7 @@
                     <StackPanel Orientation="Horizontal">
                         <Button x:Name="Create" Content="Create entry" Margin="30,0,0,0" Click="Create_Click"/>
                         <Button x:Name="Clear" Content="Clear data" Margin="200,0,0,0" Click="Clear_Click"/>
-                        <Button x:Name="Import" Content="Import Entry" Margin="200,0,0,0"/>
+                        <Button x:Name="Import" Content="Import Entry" Margin="200,0,0,0" Click="Import_Click"/>
                     </StackPanel>
                 </StackPanel>
             </TabItem>
@@ -55,7 +55,7 @@
                     </DataGrid>
                     <StackPanel Orientation="Vertical">
                         <StackPanel Orientation="Horizontal">
-                            <Button x:Name="Settings" Content="Settings" Margin="10,10,0,0" Height="70"/>
+                            <Button x:Name="SetBut" Content="Settings" Margin="10,10,0,0" Height="70" Click="Settings_Click"/>
                             <Button x:Name="VoiceCmd" Content="Voice Commands" Margin="10,10,0,0"/>
                         </StackPanel>
                         <TextBox x:Name="Commands" Height="400" Width="270"/>

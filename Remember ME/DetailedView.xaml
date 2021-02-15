@@ -23,7 +23,7 @@
             <StackPanel Orientation="Horizontal">
                 <StackPanel Orientation="Vertical">
                     <Label Content="Description" Margin="10,10,0,10" FontSize="20"/>
-                    <TextBox x:Name="EntryDesc" FontSize="20" Width="600" HorizontalAlignment="Left" Height="120" Margin="10,0,0,20"/>
+                    <TextBox x:Name="EntryDesc" FontSize="20" Width="600" HorizontalAlignment="Left" Height="120" Margin="10,0,0,20" IsEnabled="False"/>
                 </StackPanel>
                 <StackPanel Orientation="Vertical">
                     <MediaElement Height="150" Name="Video" LoadedBehavior="Manual" Width="380" Margin="10,0,0,0"/>

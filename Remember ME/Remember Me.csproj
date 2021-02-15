@@ -81,6 +81,7 @@
       <HintPath>packages\System.Runtime.CompilerServices.Unsafe.4.5.2\lib\netstandard2.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
     <Reference Include="System.Transactions" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -116,6 +117,11 @@
     </Compile>
     <Compile Include="Entries.cs" />
     <Compile Include="ExportClass.cs" />
+    <Compile Include="Settigns.xaml.cs">
+      <DependentUpon>Settigns.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SettingsSave.cs" />
+    <Compile Include="SettingsClass.cs" />
     <Compile Include="ViewEntry.xaml.cs">
       <DependentUpon>ViewEntry.xaml</DependentUpon>
     </Compile>
@@ -143,6 +149,10 @@
       <DependentUpon>Login.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Settigns.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="ViewEntry.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

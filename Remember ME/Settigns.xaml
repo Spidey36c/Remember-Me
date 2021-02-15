@@ -1,0 +1,27 @@
+﻿<Window x:Class="Remember_Me.Settigns"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Remember_Me"
+        mc:Ignorable="d"
+        Title="Settings" Height="240" Width="600" ResizeMode="NoResize">
+    <Grid>
+        <StackPanel Orientation="Vertical">
+            <Label Content="Default Location for Importing Files" FontSize="20"/>
+            <StackPanel Orientation="Horizontal">
+                <TextBox x:Name="ImportFolder" FontSize="20" Width="400" HorizontalAlignment="Left" IsEnabled="False"/>
+                <Button x:Name="ImportBrowse" Content="Browse for folder" FontSize="20" Margin="20,0,0,0" Click="ImportBrowse_Click"/>
+            </StackPanel>
+            <Label Content="Default Location for Exporting Files" FontSize="20"/>
+            <StackPanel Orientation="Horizontal">
+                <TextBox x:Name="ExportFolder" FontSize="20" Width="400" HorizontalAlignment="Left" IsEnabled="False"/>
+                <Button x:Name="ExportBrowse" Content="Browse for folder" FontSize="20" Margin="20,0,0,0" Click="ExportBrowse_Click"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Button x:Name="Close" Content="Save Settings and Close" FontSize="20" Width="250" Margin="100,20,0,0" Click="Close_Click"/>
+                <Button x:Name="Test" Content="Test Remove settings" FontSize="20" Width="200" Click="Test_Click"/>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Window>

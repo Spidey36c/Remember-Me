@@ -26,14 +26,17 @@ namespace Remember_Me
         public DetailedView()
         {
             InitializeComponent();
-            string selected = (string)Application.Current.Properties["Selected"];
+            LoadEntry(); //Just to have the constructor less cluttered
+        }
 
-            string query = "SELECT * FROM entry WHERE entry.name = '" + selected + "'";
+        private void LoadEntry()
+        {
+            string selected = (string)Application.Current.Properties["Selected"]; //Get Entry Name
 
             string server = "server=127.0.0.1;user id=root;database=rememberme;password=Hermiston2017!";
             MySqlConnection con = new MySqlConnection(server);
 
-            string check = "SELECT * FROM entry WHERE entry.name = '" + selected + "'";
+            string check = "SELECT * FROM entry WHERE entry.name = '" + selected + "'"; //Get entry from DB
             MySqlCommand cmd = new MySqlCommand(check, con);
 
             con.Open();
@@ -46,12 +49,12 @@ namespace Remember_Me
             EntryClass.Name = reader.GetString("Name");
             EntryClass.Group = reader.GetString("Group");
             EntryClass.Description = reader.GetString("Description");
-            if (!reader.IsDBNull(reader.GetOrdinal("Picture")))
+            if (!reader.IsDBNull(reader.GetOrdinal("Picture"))) //Check if entry contains picture
                 EntryClass.Picture = (byte[])reader["Picture"];
             else
                 EntryClass.Picture = null;
 
-            if (!reader.IsDBNull(reader.GetOrdinal("AVPath")))
+            if (!reader.IsDBNull(reader.GetOrdinal("AVPath"))) //Check if entry contains Audio/Video
                 EntryClass.FilePath = reader.GetString("AVPath");
             else
                 EntryClass.FilePath = null;
@@ -87,11 +90,15 @@ namespace Remember_Me
 
             if (EntryClass.FilePath != null)
             {
-                if(File.Exists(EntryClass.FilePath))
+                if (File.Exists(EntryClass.FilePath)) //try to find video
                 {
                     Video.Source = new Uri(EntryClass.FilePath);
                     PlayVideo.Visibility = Visibility.Visible;
                     PauseVideo.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    MessageBox.Show("Video or Audio File could not be found, try editing the entry and reselecting the desired file");
                 }
             }
         }
@@ -132,17 +139,22 @@ namespace Remember_Me
             export.Group = EntryClass.Group;
             export.Picture = EntryClass.Picture; //whether this is null or not this should work
 
-
-            //ABSOLUTELY NEED TO UPDATE THIS WHEN DEFAULT FOLDERS ARE ADDED
-            //current just has a test file to mess with
+            string path = SettingsClass.ExportF + "\\" + export.Name + ".xml"; //create path to export file
             XmlSerializer serializer = new XmlSerializer(typeof(ExportClass));
-            using(TextWriter write = new StreamWriter(@"C:\Test.xml")) //using avoids having to open and close the writer
+            using(TextWriter write = new StreamWriter(@path)) //using avoids having to open and close the writer
             {
-                //Test.xml will eventually be "filepath....(entryname).xml"
                 serializer.Serialize(write, export);
             }
 
-            MessageBox.Show("Entry Successfully Exported");
+
+            if (File.Exists(path))
+            {
+                MessageBox.Show("Entry Successfully Exported");
+            }
+            else
+            {
+                MessageBox.Show("Failed to export entry");
+            }
         }
     }
 }
