@@ -9,10 +9,12 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
+using Microsoft.Win32;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Xml.Serialization;
 
 namespace Remember_Me
 {
@@ -73,6 +75,7 @@ namespace Remember_Me
             con.Open();
 
             MySqlDataReader dataReader = cmd.ExecuteReader();
+            dataReader.Read();
 
             if (dataReader.HasRows && ((string)dataReader["Name"] != EntryClass.Name))
             {
@@ -82,17 +85,36 @@ namespace Remember_Me
             else
             {
                 con.Close(); //SQL injection issue
-                check = "UPDATE `rememberme`.`entry` SET `Name` = '" + EntryName.Text /* make this @name*/ + "', `Group` = '" + EntryGroup.Text + "', `Description` = '" + EntryDesc.Text + "' WHERE (`ID` = '" + EntryClass.ID /*I think this MAY be fine*/ + "')";
+
+                byte[] ImgData = null;
+                if (EntryImg.Source != null && EntryClass.Picture == null) //if there doesn't already exist a picture(or none) and if there is a new picture instead
+                {
+                    FileStream fs = new FileStream(((BitmapImage)EntryImg.Source).UriSource.OriginalString, FileMode.Open, FileAccess.Read);
+
+                    BinaryReader br = new BinaryReader(fs);
+                    ImgData = br.ReadBytes((int)fs.Length);
+
+                    br.Close();
+                    fs.Close();
+                }
+                else if (EntryClass.Picture != null)
+                {
+                    ImgData = EntryClass.Picture;
+                }
+
+                check = "UPDATE `rememberme`.`entry` SET `Name` = @Name, `Group` = @Group, `Description` = @Description, `Picture` = @Picture WHERE (`ID` = '" + EntryClass.ID /*I think this MAY be fine*/ + "')";
                 cmd.CommandText = check;
 
                 // just use this to fix above injection issue,
                 cmd.Parameters.AddWithValue("@Name", EntryName.Text);
                 cmd.Parameters.AddWithValue("@Group", EntryGroup.Text);
                 cmd.Parameters.AddWithValue("@Description", EntryDesc.Text);
+                cmd.Parameters.AddWithValue("@Picture", ImgData);
 
                 EntryClass.Name = EntryName.Text;
                 EntryClass.Group = EntryGroup.Text;
                 EntryClass.Description = EntryDesc.Text;
+                EntryClass.Picture = ImgData;
 
                 con.Open();
 
@@ -117,6 +139,68 @@ namespace Remember_Me
         private void PauseVideo_Click(object sender, RoutedEventArgs e)
         {
             Video.Pause();
+        }
+
+        private void Cancel_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
+
+        private void Import_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog op = new OpenFileDialog();
+            op.Title = "Select an Entry";
+            op.Filter = "XML Files|*.xml";
+            op.InitialDirectory = SettingsClass.ImportF;
+            if (op.ShowDialog() == true)
+            {
+                XmlSerializer Deser = new XmlSerializer(typeof(ExportClass));
+                TextReader reader = new StreamReader(op.FileName);
+                object obj = Deser.Deserialize(reader);
+                ExportClass ex = (ExportClass)obj; //unsure if this will work if xml deserialized is not of the same class
+                reader.Close();
+                EntryName.Text = ex.Name;
+                EntryGroup.Text = ex.Group;
+                EntryDesc.Text = ex.Description;
+
+                if (ex.Picture != null)
+                {
+                    BitmapImage bi = new BitmapImage();
+
+                    MemoryStream ms = new MemoryStream(ex.Picture);
+
+                    ms.Position = 0;
+
+                    bi.BeginInit();
+                    bi.CreateOptions = BitmapCreateOptions.PreservePixelFormat;
+                    bi.CacheOption = BitmapCacheOption.OnLoad;
+                    bi.UriSource = null;
+                    bi.StreamSource = ms;
+                    bi.EndInit();
+                    bi.Freeze();
+
+                    TempImg.Visibility = Visibility.Collapsed;
+                    EntryImg.Source = bi;
+                    EntryImg.Visibility = Visibility.Visible;
+                }
+
+                EntryClass.Picture = ex.Picture;
+            }
+        }
+
+        private void Browse_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog op = new OpenFileDialog();
+            op.Title = "Select a Picture";
+            op.Filter = "All supported graphics|*.jpg;*.jpeg;*.png|JPEG (*.jpg;*.jpeg)|*.jpg;*.jpeg|Portable Network Graphic (*.png)|*.png";
+            //Might expand filter if needed, I.E. weird camera image file, needs testing
+            if (op.ShowDialog() == true)
+            {
+                TempImg.Visibility = Visibility.Collapsed;
+                EntryImg.Source = new BitmapImage(new Uri(op.FileName));
+                EntryImg.Visibility = Visibility.Visible;
+                EntryClass.Picture = null;
+            }
         }
     }
 }

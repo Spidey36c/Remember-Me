@@ -20,6 +20,11 @@ using System.Collections;
 using System.Xml.Serialization;
 using System.IO.IsolatedStorage;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Speech.Recognition;
+using System.Globalization;
+using System.Windows.Forms;
+using System.Windows.Automation.Peers;
+using System.Windows.Automation.Provider;
 
 namespace Remember_Me
 {
@@ -28,11 +33,15 @@ namespace Remember_Me
     /// </summary>
     public partial class ViewEntry : Window
     {
+        static CultureInfo ci = new CultureInfo("en-us");
+        static SpeechRecognitionEngine speech = new SpeechRecognitionEngine(ci);
         public ViewEntry()
         {
             InitializeComponent();
             FillDataGrid();
             LoadSettings();
+            speech.SetInputToDefaultAudioDevice();
+            speech.SpeechRecognized += sre_SpeechRecognized;
         }
 
         private void LoadSettings()
@@ -42,9 +51,9 @@ namespace Remember_Me
             {
                 if (!isoStore.FileExists("settings.dat"))
                 {
-                    MessageBox.Show("Settings not found please add settings");
+                    System.Windows.MessageBox.Show("Settings not found please add settings"); //Make sure settings exist
                     Settigns settigns = new Settigns();
-                    settigns.Show();
+                    settigns.ShowDialog();
                 }
                 else
                 {
@@ -62,7 +71,7 @@ namespace Remember_Me
         {
             string server = "server=127.0.0.1;user id=root;database=rememberme;password=Hermiston2017!";
             MySqlConnection con = new MySqlConnection(server);
-            string query = "SELECT entry.Name, entry.Group, entry.Description FROM entry";
+            string query = "SELECT entry.Name, entry.Group FROM entry";
 
             MySqlDataAdapter entryadapt = new MySqlDataAdapter(query,con);
 
@@ -72,7 +81,31 @@ namespace Remember_Me
 
             entryadapt.Fill(dt);
 
+            dt.DefaultView.Sort = "Group desc";
+            dt = dt.DefaultView.ToTable();
+
+
             Entries.ItemsSource = dt.DefaultView;
+
+            GrammarBuilder grammarBuilder = new GrammarBuilder();
+
+
+            List<string> grammerList = new List<string>();
+            
+            for(int i = 0; i < dt.Rows.Count; i++)
+            {
+                grammerList.Add("open " + dt.Rows[i][0].ToString());
+            }
+
+            grammerList.Add("import");
+            grammerList.Add("exit");
+
+            Choices values = new Choices(grammerList.ToArray());
+
+            grammarBuilder.Append(values);
+
+            speech.LoadGrammar(new Grammar(grammarBuilder));
+
         }
 
         private void Row_DoubleClick(object sender, MouseButtonEventArgs e)
@@ -81,17 +114,25 @@ namespace Remember_Me
 
             string str = Convert.ToString(selected.Row.ItemArray[0]); //wonky but works, 
 
-            Application.Current.Properties["Selected"] = str;
-            Application.Current.Properties["Edited"] = false;
+            System.Windows.Application.Current.Properties["Selected"] = str;
+            System.Windows.Application.Current.Properties["Edited"] = false;
 
             DetailedView view = new DetailedView();
             view.ShowDialog();
             EntryClass.Picture = null; //Needed for import to work, without it, it probably wouldn't
+
+            bool edit = (bool)System.Windows.Application.Current.Properties["Edited"];
+
+            if(edit)
+            {
+                speech.UnloadAllGrammars();
+                FillDataGrid();
+            }
         }
 
         private void LoadImg_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog op = new OpenFileDialog();
+            Microsoft.Win32.OpenFileDialog op = new Microsoft.Win32.OpenFileDialog();
             op.Title = "Select a Picture";
             op.Filter = "All supported graphics|*.jpg;*.jpeg;*.png|JPEG (*.jpg;*.jpeg)|*.jpg;*.jpeg|Portable Network Graphic (*.png)|*.png"; 
             //Might expand filter if needed, I.E. weird camera image file, needs testing
@@ -109,15 +150,15 @@ namespace Remember_Me
             //Find a better way to do this if possible
             if (string.IsNullOrEmpty(EntryName.Text)) //Check for required data
             {
-                MessageBox.Show("Missing Name of Entry");
+                System.Windows.MessageBox.Show("Missing Name of Entry");
             }
             else if (string.IsNullOrEmpty(EntryGroup.Text))
             {
-                MessageBox.Show("Missing Group of Entry");
+                System.Windows.MessageBox.Show("Missing Group of Entry");
             }
             else if (string.IsNullOrEmpty(EntryDesc.Text))
             {
-                MessageBox.Show("Missing Description of Entry");
+                System.Windows.MessageBox.Show("Missing Description of Entry");
             }
             else //Clear data
             {
@@ -151,9 +192,9 @@ namespace Remember_Me
 
                 MySqlDataReader dataReader = cmd.ExecuteReader();
 
-                if (dataReader.HasRows) //even if this fails the data will still be sent
+                if (dataReader.HasRows) //even if this fails the data will still be sent, data problem
                 {
-                    MessageBox.Show("That Entry Name Already Exists");
+                    System.Windows.MessageBox.Show("That Entry Name Already Exists");
                     con.Close();
                 }
                 else
@@ -173,7 +214,7 @@ namespace Remember_Me
                     int RowsAffected = cmd.ExecuteNonQuery();
                     if (RowsAffected > 0)
                     {
-                        MessageBox.Show("Entry Successfully Added");
+                        System.Windows.MessageBox.Show("Entry Successfully Added");
                     }
 
                     con.Close();
@@ -204,8 +245,8 @@ namespace Remember_Me
 
         private void LoadVideo_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Do not delete or move the selected video after creating entry, or errors may occur"); //irritating for testing, only show once per new entry?
-            OpenFileDialog op = new OpenFileDialog();
+            System.Windows.MessageBox.Show("Do not delete or move the selected video after creating entry, or errors may occur"); //irritating for testing, only show once per new entry?
+            Microsoft.Win32.OpenFileDialog op = new Microsoft.Win32.OpenFileDialog();
             op.Title = "Select a Picture";
             op.Filter = "*All Media Files|*.mp3;*.mp4;*.wmv";
             //WMV may not work for everything
@@ -229,7 +270,7 @@ namespace Remember_Me
 
         private void Import_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog op = new OpenFileDialog();
+            Microsoft.Win32.OpenFileDialog op = new Microsoft.Win32.OpenFileDialog();
             op.Title = "Select an Entry";
             op.Filter = "XML Files|*.xml";
             op.InitialDirectory = SettingsClass.ImportF;
@@ -273,6 +314,73 @@ namespace Remember_Me
         {
             Settigns settigns = new Settigns();
             settigns.Show();
+        }
+
+        void sre_SpeechRecognized(object sender, SpeechRecognizedEventArgs e)
+        {
+            string txt = e.Result.Text;
+            float conf = e.Result.Confidence;
+            bool edit = false;
+            bool import = false;
+            bool exit = false;
+            if (conf >= 0.65) //Trying to avoid bad commands
+            {
+                VoiceText.Text = txt;
+
+                if(txt.IndexOf("open") == 0)
+                {
+                    string selected = txt.Substring(5, txt.Length - 5); //it works
+
+                    System.Windows.Application.Current.Properties["Selected"] = selected;
+                    System.Windows.Application.Current.Properties["Edited"] = false;
+
+                    DetailedView view = new DetailedView();
+                    view.ShowDialog();
+                    EntryClass.Picture = null;
+
+                    edit = (bool)System.Windows.Application.Current.Properties["Edited"];
+                }
+                else if(txt.IndexOf("import") == 0)
+                {
+                    import = true;
+                }
+                else if(txt.IndexOf("exit") == 0)
+                {
+                    exit = true;
+                }
+            }
+            else
+            {
+                System.Windows.MessageBox.Show("Did not hear you clearly try again");
+            }
+            VoiceCmd.IsChecked = false;
+            if (edit)
+            {
+                speech.UnloadAllGrammars(); //need to be put out here to avoid lag after closing detailed view. Why, I have no idea.
+                FillDataGrid();
+            }
+            else if(import)
+            {
+                CreateTab.IsSelected = true;
+                ButtonAutomationPeer peer = new ButtonAutomationPeer(Import);
+                IInvokeProvider invoke = peer.GetPattern(PatternInterface.Invoke) as IInvokeProvider;
+                invoke.Invoke();
+            }
+            else if(exit)
+            {
+                App.Current.Shutdown();
+            }
+        }
+
+        private void VoiceCmd_Unchecked(object sender, RoutedEventArgs e)
+        {
+            speech.RecognizeAsyncStop();
+        }            
+
+        private void VoiceCmd_Checked(object sender, RoutedEventArgs e)
+        {
+
+            speech.RecognizeAsync(RecognizeMode.Multiple);
         }
     }
 }

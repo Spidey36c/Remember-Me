@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Speech.Recognition;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -118,6 +119,26 @@ namespace Remember_Me
                 EntryName.Text = EntryClass.Name;
                 EntryGroup.Text = EntryClass.Group;
                 EntryDesc.Text = EntryClass.Description;
+                if (EntryClass.Picture != null)
+                {
+                    BitmapImage bi = new BitmapImage();
+
+                    MemoryStream ms = new MemoryStream(EntryClass.Picture);
+
+                    ms.Position = 0;
+
+                    bi.BeginInit();
+                    bi.CreateOptions = BitmapCreateOptions.PreservePixelFormat;
+                    bi.CacheOption = BitmapCacheOption.OnLoad;
+                    bi.UriSource = null;
+                    bi.StreamSource = ms;
+                    bi.EndInit();
+                    bi.Freeze();
+
+                    TempImg.Visibility = Visibility.Collapsed;
+                    EntryImg.Source = bi;
+                    EntryImg.Visibility = Visibility.Visible;
+                }
             }
         }
 
