@@ -9,13 +9,13 @@
     <Grid>
         <StackPanel Orientation="Vertical">
                 <Label FontSize="20">
-                    <Label.Content>Email</Label.Content>
+                    <Label.Content>Username</Label.Content>
                 </Label>
                 <TextBox Width="350" x:Name="UsernameBox" FontSize="20" />
                 <Label FontSize="20">
                     <Label.Content>Password</Label.Content>
                 </Label>
-                <TextBox Width="350" x:Name="PasswordBox" FontSize="20"/>
+                <PasswordBox Width="350" x:Name="Password" FontSize="20"/>
             <StackPanel Orientation="Horizontal" Margin="0,30,0,0">
                 <Button x:Name="Create" Content="Create" Width="90" Margin="50,0,100,0" FontSize="20" VerticalAlignment="Center" Click="Login_Click"/>
                 <Button x:Name="Close" Content="Exit" Width="90" FontSize="20" VerticalAlignment="Center" Click="Close_Click"/>

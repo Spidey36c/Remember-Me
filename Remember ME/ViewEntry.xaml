@@ -20,7 +20,14 @@
                             <Label Content="Name of Entry" Margin="0,10,0,10" FontSize="20"/>
                             <TextBox x:Name="EntryName" FontSize="20" Width="300" Margin="0,0,30,0"/>
                             <Label Content="Group of Entry" Margin="0,10,0,10" FontSize="20"/>
-                            <TextBox x:Name="EntryGroup" FontSize="20" Width="300" Margin="0,0,30,0"/>
+                            <ComboBox x:Name="EntryGroup" FontSize="20" Width="300" Margin="0,0,30,0">
+                                <ComboBoxItem Tag="Fam" Content="Family"/>
+                                <ComboBoxItem Tag="Fren" Content="Freinds"/>
+                                <ComboBoxItem Tag="Care" Content="Caretakers"/>
+                                <ComboBoxItem Tag="Acqua" Content="Acquaintances"/>
+                                <ComboBoxItem Tag="LxW" Content="Area"/>
+                                <ComboBoxItem Tag="Eve" Content="Events"/>
+                            </ComboBox>
                         </StackPanel>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
@@ -58,7 +65,8 @@
                             <Button x:Name="SetBut" Content="Settings" Margin="10,10,0,0" Height="70" Click="Settings_Click"/>
                             <CheckBox x:Name="VoiceCmd" Content="Voice Commands" Margin="10,10,0,0" Checked="VoiceCmd_Checked"  Unchecked="VoiceCmd_Unchecked"/>
                         </StackPanel>
-                        <TextBox x:Name="VoiceText" Height="400" Width="270" IsEnabled="False" AcceptsReturn="True"/>
+                        <TextBox x:Name="VoiceText" Height="250" Width="270" IsEnabled="False" AcceptsReturn="True"/>
+                        <Button x:Name="Logout" Content="Log out" Margin="10,10,0,0" Height="50" Click="Logout_Click"/>
                     </StackPanel>
                 </StackPanel>
             </TabItem>        

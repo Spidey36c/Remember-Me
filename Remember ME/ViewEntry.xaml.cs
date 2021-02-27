@@ -71,9 +71,11 @@ namespace Remember_Me
         {
             string server = "server=127.0.0.1;user id=root;database=rememberme;password=Hermiston2017!";
             MySqlConnection con = new MySqlConnection(server);
-            string query = "SELECT entry.Name, entry.Group FROM entry";
+            string query = "SELECT entry.Name, entry.Group FROM entry WHERE entry.username = @name";
 
             MySqlDataAdapter entryadapt = new MySqlDataAdapter(query,con);
+
+            entryadapt.SelectCommand.Parameters.AddWithValue("@name", account.User);
 
             MySqlCommandBuilder Entrycmd = new MySqlCommandBuilder(entryadapt);
 
@@ -202,6 +204,8 @@ namespace Remember_Me
                     con.Close();
                     string query = "INSERT INTO `rememberme`.`entry`(`Name`,`Group`,`Description`,`Picture`,`AVPath`) VALUES(@Name, @Group, @Description, @Picture,@Path)";
                     cmd.CommandText = query;
+
+
 
                     cmd.Parameters.AddWithValue("@Name", EntryName.Text);
                     cmd.Parameters.AddWithValue("@Group", EntryGroup.Text);
@@ -353,7 +357,6 @@ namespace Remember_Me
             {
                 System.Windows.MessageBox.Show("Did not hear you clearly try again");
             }
-            VoiceCmd.IsChecked = false;
             if (edit)
             {
                 speech.UnloadAllGrammars(); //need to be put out here to avoid lag after closing detailed view. Why, I have no idea.
@@ -381,6 +384,14 @@ namespace Remember_Me
         {
 
             speech.RecognizeAsync(RecognizeMode.Multiple);
+        }
+
+        private void Logout_Click(object sender, RoutedEventArgs e)
+        {
+            account.Clear();
+            MainWindow login = new MainWindow();
+            login.Show();
+            this.Close();
         }
     }
 }
