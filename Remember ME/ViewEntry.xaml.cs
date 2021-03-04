@@ -33,6 +33,7 @@ namespace Remember_Me
     /// </summary>
     public partial class ViewEntry : Window
     {
+        private account Account = new account();
         static CultureInfo ci = new CultureInfo("en-us");
         static SpeechRecognitionEngine speech = new SpeechRecognitionEngine(ci);
         public ViewEntry()
@@ -53,7 +54,7 @@ namespace Remember_Me
                 {
                     System.Windows.MessageBox.Show("Settings not found please add settings"); //Make sure settings exist
                     Settigns settigns = new Settigns();
-                    settigns.ShowDialog();
+                    settigns.ShowDialog(); // no need to re run after return from settings view as settings class should be filled.
                 }
                 else
                 {
@@ -62,6 +63,7 @@ namespace Remember_Me
                     save = (SettingsSave)bf.Deserialize(fs);
                     SettingsClass.ExportF = save.ExportF;
                     SettingsClass.ImportF = save.ImportF;
+                    fs.Close();
                 }
 
             }
@@ -69,13 +71,23 @@ namespace Remember_Me
 
         private void FillDataGrid()
         {
+            using (IsolatedStorageFile isoStore = IsolatedStorageFile.GetStore(IsolatedStorageScope.User | IsolatedStorageScope.Domain | IsolatedStorageScope.Assembly, null, null))
+            {
+                if (isoStore.FileExists("Autolog.dat"))
+                {
+                    IsolatedStorageFileStream fs = isoStore.OpenFile("Autolog.dat", System.IO.FileMode.Open);
+                    BinaryFormatter bf = new BinaryFormatter();
+                    Account = (account)bf.Deserialize(fs);
+                    fs.Close();
+                }
+            }
             string server = "server=127.0.0.1;user id=root;database=rememberme;password=Hermiston2017!";
             MySqlConnection con = new MySqlConnection(server);
             string query = "SELECT entry.Name, entry.Group FROM entry WHERE entry.username = @name";
 
             MySqlDataAdapter entryadapt = new MySqlDataAdapter(query,con);
 
-            entryadapt.SelectCommand.Parameters.AddWithValue("@name", account.User);
+            entryadapt.SelectCommand.Parameters.AddWithValue("@name", Account.User);
 
             MySqlCommandBuilder Entrycmd = new MySqlCommandBuilder(entryadapt);
 
@@ -388,7 +400,14 @@ namespace Remember_Me
 
         private void Logout_Click(object sender, RoutedEventArgs e)
         {
-            account.Clear();
+            Account.Clear();
+            using (IsolatedStorageFile isoStore = IsolatedStorageFile.GetStore(IsolatedStorageScope.User | IsolatedStorageScope.Domain | IsolatedStorageScope.Assembly, null, null))
+            {
+                if (isoStore.FileExists("Autolog.dat")) //check if file exists
+                {
+                    isoStore.DeleteFile("Autolog.dat"); //delete file to make space for new Autolog
+                }
+            }
             MainWindow login = new MainWindow();
             login.Show();
             this.Close();

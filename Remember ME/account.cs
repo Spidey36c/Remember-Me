@@ -6,24 +6,25 @@ using System.Threading.Tasks;
 
 namespace Remember_Me
 {
-    public static class account
+    [Serializable]
+    public class account
     {
-        private static string name;
-        private static string pass;
+        private string name;
+        private string pass;
 
-        public static string User
+        public string User
         {
             get { return name; }
             set { name = value; }
         }
 
-        public static string Password
+        public string Password
         {
             get { return pass; }
             set { pass = value; }
         }
 
-        public static void Clear()
+        public void Clear()
         {
             name = null;
             pass = null;
