@@ -71,14 +71,17 @@ namespace Remember_Me
 
         private void FillDataGrid()
         {
-            using (IsolatedStorageFile isoStore = IsolatedStorageFile.GetStore(IsolatedStorageScope.User | IsolatedStorageScope.Domain | IsolatedStorageScope.Assembly, null, null))
+            if (Account.User == null)
             {
-                if (isoStore.FileExists("Autolog.dat"))
+                using (IsolatedStorageFile isoStore = IsolatedStorageFile.GetStore(IsolatedStorageScope.User | IsolatedStorageScope.Domain | IsolatedStorageScope.Assembly, null, null))
                 {
-                    IsolatedStorageFileStream fs = isoStore.OpenFile("Autolog.dat", System.IO.FileMode.Open);
-                    BinaryFormatter bf = new BinaryFormatter();
-                    Account = (account)bf.Deserialize(fs);
-                    fs.Close();
+                    if (isoStore.FileExists("Autolog.dat"))
+                    {
+                        IsolatedStorageFileStream fs = isoStore.OpenFile("Autolog.dat", System.IO.FileMode.Open);
+                        BinaryFormatter bf = new BinaryFormatter();
+                        Account = (account)bf.Deserialize(fs);
+                        fs.Close();
+                    }
                 }
             }
             string server = "server=127.0.0.1;user id=root;database=rememberme;password=Hermiston2017!";
@@ -120,27 +123,39 @@ namespace Remember_Me
 
             speech.LoadGrammar(new Grammar(grammarBuilder));
 
+            
+
         }
 
         private void Row_DoubleClick(object sender, MouseButtonEventArgs e)
         {
-            DataRowView selected = (DataRowView)Entries.SelectedItems[0];
-
-            string str = Convert.ToString(selected.Row.ItemArray[0]); //wonky but works, 
-
-            System.Windows.Application.Current.Properties["Selected"] = str;
-            System.Windows.Application.Current.Properties["Edited"] = false;
-
-            DetailedView view = new DetailedView();
-            view.ShowDialog();
-            EntryClass.Picture = null; //Needed for import to work, without it, it probably wouldn't
-
-            bool edit = (bool)System.Windows.Application.Current.Properties["Edited"];
-
-            if(edit)
+            if (Entries.SelectedIndex < 0)
             {
-                speech.UnloadAllGrammars();
-                FillDataGrid();
+                System.Windows.MessageBox.Show("Problem Encountered, wait a couple seconds before accessing this entry");
+            }
+            else
+            {
+                DataRowView selected = (DataRowView)Entries.SelectedItems[0];
+
+                string str = Convert.ToString(selected.Row.ItemArray[0]); //wonky but works, 
+
+                System.Windows.Application.Current.Properties["Selected"] = str;
+                System.Windows.Application.Current.Properties["Edited"] = false;
+
+                EntryClass.User = Account.User;
+                DetailedView view = new DetailedView();
+                view.ShowDialog();
+                EntryClass.Picture = null; //Needed for import to work, without it, it probably wouldn't
+
+
+                bool edit = (bool)System.Windows.Application.Current.Properties["Edited"];
+
+                if (edit)
+                {
+                    speech.UnloadAllGrammars();
+                    FillDataGrid();
+                }
+                EntryClass.User = null;
             }
         }
 
@@ -199,7 +214,7 @@ namespace Remember_Me
                 string server = "server=127.0.0.1;user id=root;database=rememberme;password=Hermiston2017!";
                 MySqlConnection con = new MySqlConnection(server);
 
-                string check = "SELECT * FROM entry WHERE entry.name = '" + EntryName.Text + "'"; //injection issue
+                string check = "SELECT * FROM entry WHERE entry.name = '" + EntryName.Text + "' AND entry.username = '" + Account.User + "'"; //injection issue
                 MySqlCommand cmd = new MySqlCommand(check, con);
 
                 con.Open();
@@ -214,7 +229,7 @@ namespace Remember_Me
                 else
                 {
                     con.Close();
-                    string query = "INSERT INTO `rememberme`.`entry`(`Name`,`Group`,`Description`,`Picture`,`AVPath`) VALUES(@Name, @Group, @Description, @Picture,@Path)";
+                    string query = "INSERT INTO `rememberme`.`entry`(`Name`,`Group`,`Description`,`Picture`,`AVPath`,`username`) VALUES(@Name, @Group, @Description, @Picture,@Path,@User)";
                     cmd.CommandText = query;
 
 
@@ -224,6 +239,7 @@ namespace Remember_Me
                     cmd.Parameters.AddWithValue("@Description", EntryDesc.Text);
                     cmd.Parameters.AddWithValue("@Picture", ImgData); //could break maybe
                     cmd.Parameters.AddWithValue("@Path", VidFile);
+                    cmd.Parameters.AddWithValue("@User", Account.User);
 
                     con.Open();
 

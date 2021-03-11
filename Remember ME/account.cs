@@ -9,8 +9,8 @@ namespace Remember_Me
     [Serializable]
     public class account
     {
-        private string name;
-        private string pass;
+        private string name = null;
+        private string pass = null;
 
         public string User
         {

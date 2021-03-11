@@ -14,6 +14,7 @@ namespace Remember_Me
         private static string desc;
         private static byte[] picture;
         private static string fpath;
+        private static string acc;
 
         public static int ID
         {
@@ -49,6 +50,12 @@ namespace Remember_Me
         {
             get { return fpath; }
             set { fpath = value; }
+        }
+
+        public static string User
+        {
+            get { return acc; }
+            set { acc = value; }
         }
 
     }

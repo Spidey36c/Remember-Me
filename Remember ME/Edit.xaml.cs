@@ -69,7 +69,7 @@ namespace Remember_Me
             MySqlConnection con = new MySqlConnection(server);
 
 
-            string check = "SELECT * FROM entry WHERE entry.name = '" + EntryName.Text + "'"; //SQL injection issue
+            string check = "SELECT * FROM entry WHERE entry.name = '" + EntryName.Text + "' AND entry.username = '" + EntryClass.User + "'"; ; //SQL injection issue
             MySqlCommand cmd = new MySqlCommand(check, con);
 
             con.Open();

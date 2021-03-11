@@ -37,7 +37,7 @@ namespace Remember_Me
             string server = "server=127.0.0.1;user id=root;database=rememberme;password=Hermiston2017!";
             MySqlConnection con = new MySqlConnection(server);
 
-            string check = "SELECT * FROM entry WHERE entry.name = '" + selected + "'"; //Get entry from DB
+            string check = "SELECT * FROM entry WHERE entry.name = '" + selected + "' AND entry.username = '" + EntryClass.User + "'"; //Get entry from DB
             MySqlCommand cmd = new MySqlCommand(check, con);
 
             con.Open();
@@ -45,7 +45,6 @@ namespace Remember_Me
             MySqlDataReader reader = cmd.ExecuteReader();
 
             reader.Read();
-
             EntryClass.ID = reader.GetInt32("ID");
             EntryClass.Name = reader.GetString("Name");
             EntryClass.Group = reader.GetString("Group");
@@ -59,7 +58,6 @@ namespace Remember_Me
                 EntryClass.FilePath = reader.GetString("AVPath");
             else
                 EntryClass.FilePath = null;
-
             reader.Close();
 
             con.Close();
