@@ -43,6 +43,7 @@ namespace Remember_Me
             LoadSettings();
             speech.SetInputToDefaultAudioDevice();
             speech.SpeechRecognized += sre_SpeechRecognized;
+            ViewTab.IsSelected = true;
         }
 
         private void LoadSettings()
@@ -365,6 +366,8 @@ namespace Remember_Me
 
                     System.Windows.Application.Current.Properties["Selected"] = selected;
                     System.Windows.Application.Current.Properties["Edited"] = false;
+
+                    EntryClass.User = Account.User;
 
                     DetailedView view = new DetailedView();
                     view.ShowDialog();

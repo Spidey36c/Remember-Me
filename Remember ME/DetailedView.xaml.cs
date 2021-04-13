@@ -44,61 +44,68 @@ namespace Remember_Me
 
             MySqlDataReader reader = cmd.ExecuteReader();
 
-            reader.Read();
-            EntryClass.ID = reader.GetInt32("ID");
-            EntryClass.Name = reader.GetString("Name");
-            EntryClass.Group = reader.GetString("Group");
-            EntryClass.Description = reader.GetString("Description");
-            if (!reader.IsDBNull(reader.GetOrdinal("Picture"))) //Check if entry contains picture
-                EntryClass.Picture = (byte[])reader["Picture"];
-            else
-                EntryClass.Picture = null;
-
-            if (!reader.IsDBNull(reader.GetOrdinal("AVPath"))) //Check if entry contains Audio/Video
-                EntryClass.FilePath = reader.GetString("AVPath");
-            else
-                EntryClass.FilePath = null;
-            reader.Close();
-
-            con.Close();
-
-            EntryName.Text = EntryClass.Name;
-            EntryGroup.Text = EntryClass.Group;
-            EntryDesc.Text = EntryClass.Description;
-
-            if (EntryClass.Picture != null)
+            if (reader.Read())
             {
-                BitmapImage bi = new BitmapImage();
-
-                MemoryStream ms = new MemoryStream(EntryClass.Picture);
-
-                ms.Position = 0;
-
-                bi.BeginInit();
-                bi.CreateOptions = BitmapCreateOptions.PreservePixelFormat;
-                bi.CacheOption = BitmapCacheOption.OnLoad;
-                bi.UriSource = null;
-                bi.StreamSource = ms;
-                bi.EndInit();
-                bi.Freeze();
-
-                TempImg.Visibility = Visibility.Collapsed;
-                EntryImg.Source = bi;
-                EntryImg.Visibility = Visibility.Visible;
-            }
-
-            if (EntryClass.FilePath != null)
-            {
-                if (File.Exists(EntryClass.FilePath)) //try to find video
-                {
-                    Video.Source = new Uri(EntryClass.FilePath);
-                    PlayVideo.Visibility = Visibility.Visible;
-                    PauseVideo.Visibility = Visibility.Visible;
-                }
+                EntryClass.ID = reader.GetInt32("ID");
+                EntryClass.Name = reader.GetString("Name");
+                EntryClass.Group = reader.GetString("Group");
+                EntryClass.Description = reader.GetString("Description");
+                if (!reader.IsDBNull(reader.GetOrdinal("Picture"))) //Check if entry contains picture
+                    EntryClass.Picture = (byte[])reader["Picture"];
                 else
+                    EntryClass.Picture = null;
+
+                if (!reader.IsDBNull(reader.GetOrdinal("AVPath"))) //Check if entry contains Audio/Video
+                    EntryClass.FilePath = reader.GetString("AVPath");
+                else
+                    EntryClass.FilePath = null;
+                reader.Close();
+
+                con.Close();
+
+                EntryName.Text = EntryClass.Name;
+                EntryGroup.Text = EntryClass.Group;
+                EntryDesc.Text = EntryClass.Description;
+
+                if (EntryClass.Picture != null)
                 {
-                    MessageBox.Show("Video or Audio File could not be found, try editing the entry and reselecting the desired file");
+                    BitmapImage bi = new BitmapImage();
+
+                    MemoryStream ms = new MemoryStream(EntryClass.Picture);
+
+                    ms.Position = 0;
+
+                    bi.BeginInit();
+                    bi.CreateOptions = BitmapCreateOptions.PreservePixelFormat;
+                    bi.CacheOption = BitmapCacheOption.OnLoad;
+                    bi.UriSource = null;
+                    bi.StreamSource = ms;
+                    bi.EndInit();
+                    bi.Freeze();
+
+                    TempImg.Visibility = Visibility.Collapsed;
+                    EntryImg.Source = bi;
+                    EntryImg.Visibility = Visibility.Visible;
                 }
+
+                if (EntryClass.FilePath != null)
+                {
+                    if (File.Exists(EntryClass.FilePath)) //try to find video
+                    {
+                        Video.Source = new Uri(EntryClass.FilePath);
+                        PlayVideo.Visibility = Visibility.Visible;
+                        PauseVideo.Visibility = Visibility.Visible;
+                    }
+                    else
+                    {
+                        MessageBox.Show("Video or Audio File could not be found, try editing the entry and reselecting the desired file");
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("Failed to open entry");
+                this.Close();
             }
         }
 

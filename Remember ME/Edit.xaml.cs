@@ -65,69 +65,84 @@ namespace Remember_Me
 
         private void Finish_Click(object sender, RoutedEventArgs e)
         {
-            string server = "server=127.0.0.1;user id=root;database=rememberme;password=Hermiston2017!";
-            MySqlConnection con = new MySqlConnection(server);
-
-
-            string check = "SELECT * FROM entry WHERE entry.name = '" + EntryName.Text + "' AND entry.username = '" + EntryClass.User + "'"; ; //SQL injection issue
-            MySqlCommand cmd = new MySqlCommand(check, con);
-
-            con.Open();
-
-            MySqlDataReader dataReader = cmd.ExecuteReader();
-            dataReader.Read();
-
-            if (dataReader.HasRows && ((string)dataReader["Name"] != EntryClass.Name))
+            if (string.IsNullOrEmpty(EntryName.Text)) //Check for required data
             {
-                MessageBox.Show("That Entry Name Already Exists");
-                con.Close();
+                System.Windows.MessageBox.Show("Missing Name of Entry");
             }
-            else
+            else if (string.IsNullOrEmpty(EntryGroup.Text))
             {
-                con.Close(); //SQL injection issue
+                System.Windows.MessageBox.Show("Missing Group of Entry");
+            }
+            else if (string.IsNullOrEmpty(EntryDesc.Text))
+            {
+                System.Windows.MessageBox.Show("Missing Description of Entry");
+            }
+            else //Clear data
+            {
+                string server = "server=127.0.0.1;user id=root;database=rememberme;password=Hermiston2017!";
+                MySqlConnection con = new MySqlConnection(server);
 
-                byte[] ImgData = null;
-                if (EntryImg.Source != null && EntryClass.Picture == null) //if there doesn't already exist a picture(or none) and if there is a new picture instead
-                {
-                    FileStream fs = new FileStream(((BitmapImage)EntryImg.Source).UriSource.OriginalString, FileMode.Open, FileAccess.Read);
 
-                    BinaryReader br = new BinaryReader(fs);
-                    ImgData = br.ReadBytes((int)fs.Length);
-
-                    br.Close();
-                    fs.Close();
-                }
-                else if (EntryClass.Picture != null)
-                {
-                    ImgData = EntryClass.Picture;
-                }
-
-                check = "UPDATE `rememberme`.`entry` SET `Name` = @Name, `Group` = @Group, `Description` = @Description, `Picture` = @Picture WHERE (`ID` = '" + EntryClass.ID /*I think this MAY be fine*/ + "')";
-                cmd.CommandText = check;
-
-                // just use this to fix above injection issue,
-                cmd.Parameters.AddWithValue("@Name", EntryName.Text);
-                cmd.Parameters.AddWithValue("@Group", EntryGroup.Text);
-                cmd.Parameters.AddWithValue("@Description", EntryDesc.Text);
-                cmd.Parameters.AddWithValue("@Picture", ImgData);
-
-                EntryClass.Name = EntryName.Text;
-                EntryClass.Group = EntryGroup.Text;
-                EntryClass.Description = EntryDesc.Text;
-                EntryClass.Picture = ImgData;
+                string check = "SELECT * FROM entry WHERE entry.name = '" + EntryName.Text + "' AND entry.username = '" + EntryClass.User + "'"; ; //SQL injection issue
+                MySqlCommand cmd = new MySqlCommand(check, con);
 
                 con.Open();
 
-                int RowsAffected = cmd.ExecuteNonQuery();
-                if (RowsAffected > 0)
+                MySqlDataReader dataReader = cmd.ExecuteReader();
+                dataReader.Read();
+
+                if (dataReader.HasRows && ((string)dataReader["Name"] != EntryClass.Name))
                 {
-                    MessageBox.Show("Entry Successfully Edited");
+                    MessageBox.Show("That Entry Name Already Exists");
+                    con.Close();
                 }
+                else
+                {
+                    con.Close(); //SQL injection issue
 
-                con.Close();
+                    byte[] ImgData = null;
+                    if (EntryImg.Source != null && EntryClass.Picture == null) //if there doesn't already exist a picture(or none) and if there is a new picture instead
+                    {
+                        FileStream fs = new FileStream(((BitmapImage)EntryImg.Source).UriSource.OriginalString, FileMode.Open, FileAccess.Read);
 
-                Application.Current.Properties["Edited"] = true;
-                this.Close();
+                        BinaryReader br = new BinaryReader(fs);
+                        ImgData = br.ReadBytes((int)fs.Length);
+
+                        br.Close();
+                        fs.Close();
+                    }
+                    else if (EntryClass.Picture != null)
+                    {
+                        ImgData = EntryClass.Picture;
+                    }
+
+                    check = "UPDATE `rememberme`.`entry` SET `Name` = @Name, `Group` = @Group, `Description` = @Description, `Picture` = @Picture WHERE (`ID` = '" + EntryClass.ID /*I think this MAY be fine*/ + "')";
+                    cmd.CommandText = check;
+
+                    // just use this to fix above injection issue,
+                    cmd.Parameters.AddWithValue("@Name", EntryName.Text);
+                    cmd.Parameters.AddWithValue("@Group", EntryGroup.Text);
+                    cmd.Parameters.AddWithValue("@Description", EntryDesc.Text);
+                    cmd.Parameters.AddWithValue("@Picture", ImgData);
+
+                    EntryClass.Name = EntryName.Text;
+                    EntryClass.Group = EntryGroup.Text;
+                    EntryClass.Description = EntryDesc.Text;
+                    EntryClass.Picture = ImgData;
+
+                    con.Open();
+
+                    int RowsAffected = cmd.ExecuteNonQuery();
+                    if (RowsAffected > 0)
+                    {
+                        MessageBox.Show("Entry Successfully Edited");
+                    }
+
+                    con.Close();
+
+                    Application.Current.Properties["Edited"] = true;
+                    this.Close();
+                }
             }
         }
 
